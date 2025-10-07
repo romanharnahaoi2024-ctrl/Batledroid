@@ -1,18 +1,28 @@
 package droids.types;
 
 import droids.base.Droid;
+import droids.battle.BattleLog;
+import droids.battle.Arena;
+import util.ConsoleColors;
 
-import java.util.Random;
+import java.util.List;
+import java.util.Scanner;
 
 public class Locker extends Droid {
-    private final Random random = new Random();
+    private static final long serialVersionUID = 1L;
 
-    public Locker(String name) {
-        super(name, 120, 20);
+    public Locker(String name, int hp, int dmg) {
+        super(name, hp, dmg);
     }
 
-    public void block(Droid enemy) {
-        enemy.setBlocked(true);
-        System.out.println("\u001B[33m" + name + " заблокував " + enemy.getName() + "\u001B[0m");
+    @Override
+    public void useAbility(List<Droid> allies, List<Droid> enemies, Scanner sc, boolean isPlayer, BattleLog log, Arena arena) {
+        // блокує одного супротивника на його наступний хід
+        Droid target = chooseTarget(enemies, sc, isPlayer);
+        if (target == null) return;
+        target.setBlocked(true);
+        String msg = ConsoleColors.YELLOW + getName() + " заблокував " + target.getName() + ConsoleColors.RESET;
+        System.out.println(msg);
+        log.add(getName() + " блокує " + target.getName());
     }
 }

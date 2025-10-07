@@ -2,13 +2,15 @@ package droids.battle;
 
 import droids.base.Droid;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class Arena {
-    private String name;
-    private double accuracyModifier;
-    private double damageModifier;
-    private static final Random random = new Random();
+public class Arena implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private final String name;
+    private final double accuracyModifier; // 0..1 — шанс влучити
+    private final double damageModifier;   // множник шкоди
+    private static final Random rnd = new Random();
 
     public Arena(String name, double accuracyModifier, double damageModifier) {
         this.name = name;
@@ -17,23 +19,25 @@ public class Arena {
     }
 
     public int applyModifiers(Droid attacker, int baseDamage) {
-        if (random.nextDouble() > accuracyModifier) {
-            System.out.println(attacker.getName() + " промахнувся!");
+        if (rnd.nextDouble() > accuracyModifier) {
+            // промах
             return 0;
         }
-        return (int) Math.round(baseDamage * damageModifier);
+        return (int)Math.round(baseDamage * damageModifier);
     }
+
+    public String getName() { return name; }
 
     public static Arena randomArena() {
         String[] names = {"Пустеля", "База Альянсу", "Місячна поверхня"};
-        double[] accMods = {0.9, 1.0, 0.8};
-        double[] dmgMods = {1.0, 0.95, 1.2};
-        int i = random.nextInt(names.length);
-        return new Arena(names[i], accMods[i], dmgMods[i]);
+        double[] acc = {0.88, 1.0, 0.82};
+        double[] dmg = {1.0, 0.95, 1.15};
+        int i = rnd.nextInt(names.length);
+        return new Arena(names[i], acc[i], dmg[i]);
     }
 
     @Override
     public String toString() {
-        return name + " (точність ×" + accuracyModifier + ", шкода ×" + damageModifier + ")";
+        return name + " (точність×" + accuracyModifier + ", шкода×" + damageModifier + ")";
     }
 }
